@@ -13,6 +13,12 @@ Parameters:
   GithubURL:
     Type: String
     Default: <YOUR GITHUB URL HERE>
+  DAGLOCATION:
+    Type: String
+    Default: DAGs
+  SCRIPTLOCATION:
+    Type: String
+    Default: scripts
 
 Resources:
   GenericCodeBuildProject:
@@ -34,6 +40,10 @@ Resources:
             Value: !Sub ${S3FilePrefix}
           - Name: PROJECT
             Value: !Sub ${S3Project}
+          - Name: DAGPATH
+            Value: !Sub ${DAGLOCATION}
+          - Name: SCRIPTPATH
+            Value: !Sub ${SCRIPTLOCATION}
       Source:
         Type: GITHUB
         Location: !Sub ${GithubURL}

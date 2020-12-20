@@ -11,6 +11,7 @@ phases:
   build:
     commands:
       - echo Copying repo to S3
-      - aws s3 cp ./  s3://$BUCKET_NAME/$FILES_PREFIX/$PROJECT/ --recursive
+      - aws s3 cp ./$DAGPATH  s3://$BUCKET_NAME/$FILES_PREFIX/$PROJECT/$DAGPATH/ --recursive
+      - aws s3 cp ./$SCRIPTPATH  s3://$BUCKET_NAME/$FILES_PREFIX/$PROJECT/$SCRIPTPATH/ --recursive
     finally:
       - echo This always runs even if s3 cp failed.
