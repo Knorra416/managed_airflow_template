@@ -5,6 +5,6 @@ This section covers generic codebuild template scripts to interact with your Air
 ## CodeBuild Files
 
 1. buildspec.yml
-   - Placeholder
+   - This is a file which specifies the commands you want to run when the codebuild project is triggered. In our case, we want to copy two locations: DAGs and scripts to places on S3 where Airflow will read from.
 2. codebuild_deployment_template.yml
-   - Placeholder
+   - This CFN template creates a codebuild project and role to trigger on push or pull requests merged to a branch named "main"
