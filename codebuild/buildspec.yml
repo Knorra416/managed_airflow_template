@@ -1,0 +1,16 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      java: corretto11
+  pre_build:
+    commands:
+      - echo Checking that github repo was cloned.
+      - ls
+  build:
+    commands:
+      - echo Copying repo to S3
+      - aws s3 cp ./  s3://$BUCKET_NAME/$FILES_PREFIX/$PROJECT/ --recursive
+    finally:
+      - echo This always runs even if s3 cp failed.
