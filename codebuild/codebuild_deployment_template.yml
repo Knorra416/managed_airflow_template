@@ -1,0 +1,98 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Automatic deployment of a CodePipeline
+Parameters:
+  S3BucketName:
+    Type: String
+    Default: <YOUR BUCKET NAME HERE>
+  S3FilePrefix:
+    Type: String
+    Default: <YOUR AIRFLOW FILE PREFIX HERE>
+  S3Project:
+    Type: String
+    Default: <YOUR AIRFLOW PROJECT NAME HERE>
+  GithubURL:
+    Type: String
+    Default: <YOUR GITHUB URL HERE>
+  DAGLOCATION:
+    Type: String
+    Default: DAGs
+  SCRIPTLOCATION:
+    Type: String
+    Default: scripts
+
+Resources:
+  GenericCodeBuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: Generic-CodeBuild-Project
+      Description: Generic Codebuild Project
+      ServiceRole: !GetAtt GenericCodeBuildRole.Arn
+      Artifacts:
+        Type: no_artifacts
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        Type: LINUX_CONTAINER
+        Image: aws/codebuild/amazonlinux2-x86_64-standard:2.0
+        EnvironmentVariables:
+          - Name: BUCKET_NAME
+            Value: !Sub ${S3BucketName}
+          - Name: FILES_PREFIX
+            Value: !Sub ${S3FilePrefix}
+          - Name: PROJECT
+            Value: !Sub ${S3Project}
+          - Name: DAGPATH
+            Value: !Sub ${DAGLOCATION}
+          - Name: SCRIPTPATH
+            Value: !Sub ${SCRIPTLOCATION}
+      Source:
+        Type: GITHUB
+        Location: !Sub ${GithubURL}
+        GitCloneDepth: 1
+      Triggers:
+        Webhook: true
+        FilterGroups:
+          - Type: EVENT
+            Pattern: PUSH
+          - Type: EVENT
+            Pattern: PULL_REQUEST_MERGED
+          - Type: HEAD_REF
+            Pattern: refs/heads/main
+      Tags:
+        - Key: "MyTag"
+          Value: "AK_Template"
+
+  GenericCodeBuildRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: Generic-CodeBuild-Role
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: ['sts:AssumeRole']
+            Effect: Allow
+            Principal:
+              Service: [codebuild.amazonaws.com]
+        Version: '2012-10-17'
+      Path: /
+      Policies:
+        - PolicyName: CodeBuildAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Action:
+                  - 'logs:*'
+                  - 'codebuild:BatchPutTestCases'
+                  - 'codebuild:CreateReport'
+                  - 'codebuild:CreateReportGroup'
+                  - 'codebuild:UpdateReport'
+                Effect: Allow
+                Resource: '*'
+             - Action:
+                  - 's3:PutObject'
+                  - 's3:GetObject'
+                  - "s3:List*"
+                  - "s3:GetObjectVersion"
+                Effect: Allow
+                Resource: '*' # Don't keep this as * permissions. Update to the specific bucket you're using.
+      Tags:
+        - Key: "MyTag"
+          Value: "AK_Template"
