@@ -24,8 +24,7 @@ Properties:
   ExecutionRoleArn: <Sub in ARN for Role Here>
   KmsKey: String
   MaxWorkers: 10
-  PluginsS3ObjectVersion: String
-  PluginsS3Path: String
+  PluginsS3Path: !Sub "s3://${S3BucketName}/${S3FilePrefix}/${SCRIPTLOCATION}/plugins.zip"
   RequirementsS3ObjectVersion: String
   RequirementsS3Path: !Sub "s3://${S3BucketName}/${S3FilePrefix}/${SCRIPTLOCATION}/requirements.txt"
   SourceBucketArn: <Sub in ARN for S3 Bucket Here>
