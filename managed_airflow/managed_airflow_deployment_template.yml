@@ -1,1 +1,37 @@
-# There is not cloudformation support yet.... waiting
+AWSTemplateFormatVersion: 2010-09-09
+Description: Automatic deployment of an Airflow Managed Environment.
+Parameters:
+  S3BucketName:
+    Type: String
+    Default: <YOUR BUCKET NAME HERE>
+  S3FilePrefix:
+    Type: String
+    Default: <YOUR AIRFLOW FILE PREFIX HERE>
+  S3Project:
+    Type: String
+    Default: <YOUR AIRFLOW PROJECT NAME HERE>
+  DAGLOCATION:
+    Type: String
+    Default: DAGs
+  SCRIPTLOCATION:
+    Type: String
+    Default: scripts
+
+Type: AWS::MWAA::Environment
+Properties:
+  AirflowVersion: "1.10.12"
+  DagS3Path: !Sub "s3://${S3BucketName}/${S3FilePrefix}/${DAGLOCATION}/"
+  ExecutionRoleArn: <Sub in ARN for Role Here>
+  KmsKey: String
+  MaxWorkers: 10
+  PluginsS3ObjectVersion: String
+  PluginsS3Path: String
+  RequirementsS3ObjectVersion: String
+  RequirementsS3Path: !Sub "s3://${S3BucketName}/${S3FilePrefix}/${SCRIPTLOCATION}/requirements.txt"
+  SourceBucketArn: <Sub in ARN for S3 Bucket Here>
+  Tags:
+    - Key: "MyTag"
+      Value: "AK_Template"
+  WebserverAccessMode: String
+  WebserverUrl: String
+  WeeklyMaintenanceWindowStart: "TUE:03:30"
