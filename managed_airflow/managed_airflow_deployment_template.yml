@@ -30,6 +30,7 @@ Resources:
       RequirementsS3ObjectVersion: String
       RequirementsS3Path: !Sub "s3://${S3BucketName}/${S3FilePrefix}/${SCRIPTLOCATION}/requirements.txt"
       SourceBucketArn: <Sub in ARN for S3 Bucket Here>
+      ServiceRole: !GetAtt GenericMWAARole.Arn
       Tags:
         - Key: "MyTag"
           Value: "AK_Template"
@@ -71,7 +72,7 @@ Resources:
                   - "kms:GenerateDataKey*"
                   - "kms:Encrypt"
                   Effect: Allow
-                  Resource: "arn:aws:kms:{{region}}:{{accountId}}:key/{{cmkId}}"
+                  Resource: "arn:aws:kms:*:{{accountId}}:key/*"
                   "Condition": {
                     "StringLike": {
                       "kms:ViaService": [
