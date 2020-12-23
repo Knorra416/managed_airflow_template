@@ -23,7 +23,7 @@ Resources:
     Properties:
       AirflowVersion: "1.10.12"
       DagS3Path: !Sub "s3://${S3BucketName}/${S3FilePrefix}/${DAGLOCATION}/"
-      ExecutionRoleArn: <Sub in ARN for Role Here>
+      ExecutionRoleArn: !GetAtt GenericMWAARole.Arn
       KmsKey: String
       MaxWorkers: 10
       NetworkConfiguration:
