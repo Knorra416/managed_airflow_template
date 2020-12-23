@@ -51,12 +51,12 @@ Resources:
       Triggers:
         Webhook: true
         FilterGroups:
-          - Type: EVENT
-            Pattern: PUSH
-          - Type: EVENT
-            Pattern: PULL_REQUEST_MERGED
-          - Type: HEAD_REF
-            Pattern: refs/heads/main
+          - - Type: EVENT
+              Pattern: PUSH, PULL_REQUEST_MERGED
+              ExcludeMatchedPattern: false
+            - Type: HEAD_REF
+              Pattern: refs/heads/main # 'main' is Branch name
+              ExcludeMatchedPattern: false
       Tags:
         - Key: "MyTag"
           Value: "AK_Template"
