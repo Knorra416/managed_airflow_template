@@ -7,9 +7,6 @@ Parameters:
   S3FilePrefix:
     Type: String
     Default: <YOUR AIRFLOW FILE PREFIX HERE>
-  S3Project:
-    Type: String
-    Default: <YOUR AIRFLOW PROJECT NAME HERE>
   DAGLOCATION:
     Type: String
     Default: DAGs
@@ -21,7 +18,6 @@ Resources:
   GenericManagedAirflow:
     Type: AWS::MWAA::Environment
     Properties:
-      AirflowVersion: "1.10.12"
       DagS3Path: !Sub "s3://${S3BucketName}/${S3FilePrefix}/${DAGLOCATION}/"
       ExecutionRoleArn: !GetAtt GenericMWAARole.Arn
       KmsKey: String
@@ -69,23 +65,15 @@ Resources:
                   - "kms:DescribeKey"
                   - "kms:GenerateDataKey*"
                   - "kms:Encrypt"
-                  Effect: Allow
-                  Resource: "arn:aws:sqs:{{region}}:*:airflow-celery-*"
+                Effect: Allow
+                Resource: "arn:aws:sqs:{{region}}:*:airflow-celery-*"
               - Action:
                   - "kms:Decrypt"
                   - "kms:DescribeKey"
                   - "kms:GenerateDataKey*"
                   - "kms:Encrypt"
-                  Effect: Allow
-                  Resource: "arn:aws:kms:*:{{accountId}}:key/*"
-                  "Condition": {
-                    "StringLike": {
-                      "kms:ViaService": [
-                          "sqs.{{region}}.amazonaws.com",
-                          "s3.{{region}}.amazonaws.com"
-                      ]
-                    }
-                  }
+                Effect: Allow
+                Resource: "arn:aws:kms:*:{{accountId}}:key/*"
               - Action:
                   - 's3:PutObject'
                   - 's3:GetObject'
@@ -93,8 +81,8 @@ Resources:
                   - "s3:GetObjectVersion"
                   - "logs:*"
                   - "cloudwatch:PutMetricData"
-                  Effect: Allow
-                  Resource: '*' # Don't keep this as * permissions. Update to the specific bucket you're using.
+                Effect: Allow
+                Resource: '*' # Don't keep this as * permissions. Update to the specific bucket you're using.
       Tags:
         - Key: "MyTag"
           Value: "AK_Template"
