@@ -18,9 +18,9 @@ Resources:
   GenericManagedAirflow:
     Type: AWS::MWAA::Environment
     Properties:
+      Name: Generic-Managed-Airflow
       DagS3Path: !Sub "s3://${S3BucketName}/${S3FilePrefix}/${DAGLOCATION}/"
       ExecutionRoleArn: !GetAtt GenericMWAARole.Arn
-      KmsKey: String
       MaxWorkers: 10
       NetworkConfiguration:
         SecurityGroupIds:
@@ -28,22 +28,19 @@ Resources:
         SubnetIds:
           - <add SubnetIDs for VPC>
       PluginsS3Path: !Sub "s3://${S3BucketName}/${S3FilePrefix}/${SCRIPTLOCATION}/plugins.zip"
-      RequirementsS3ObjectVersion: String
       RequirementsS3Path: !Sub "s3://${S3BucketName}/${S3FilePrefix}/${SCRIPTLOCATION}/requirements.txt"
-      SourceBucketArn: <Sub in ARN for S3 Bucket Here>
-      ServiceRole: !GetAtt GenericMWAARole.Arn
-      Tags:
-        - Key: "MyTag"
-          Value: "AK_Template"
-      WebserverAccessMode: String
-      WebserverUrl: String
       WeeklyMaintenanceWindowStart: "TUE:03:30"
 
   GenericMWAARole:
     Type: AWS::IAM::Role
     Properties:
       RoleName: Generic-MWAA-Role
-        Version: '2012-10-17'
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: [ 'sts:AssumeRole' ]
+            Effect: Allow
+            Principal:
+              Service: [airflow.amazonaws.com]
       Path: /
       Policies:
         - PolicyName: MWAAAccess
